@@ -10,18 +10,22 @@ int main()
 	{
 		if (input.compare("eof") == 0)
 			break;
-		auto lowerBound = std::stoi(input.substr(0, input.find("-")));
-		auto higherBound = std::stoi(input.substr(input.find("-") + 1, input.find(" ")));
+		auto firstPos = std::stoi(input.substr(0, input.find("-")));
+		auto secondPos = std::stoi(input.substr(input.find("-") + 1, input.find(" ")));
 		std::cin >> input;
 		char policy = input.substr(0, input.find(":"))[0];
 		std::cin >> input;
 		auto password = input.substr(0, input.length());
 
-		auto count = 0;
-		for(char ch : password) 
-			if (ch == policy)
-				count++;
-		if (count <= higherBound && count >= lowerBound)
+		auto posCounter = 1;
+		auto foundMatches = 0;
+		for (char ch : password) {
+			if (ch == policy && (secondPos == posCounter || firstPos == posCounter)) 
+				foundMatches++;
+			posCounter++;
+		}
+
+		if (foundMatches == 1)
 			validPasswords++;
 	}
 
