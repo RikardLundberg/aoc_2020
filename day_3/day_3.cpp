@@ -10,16 +10,28 @@ int main()
 	while (std::cin >> n && n != "eof")
 		inputs.push_back(n);
 
-	int treeCounter = 0;
-	int currentXPos = 0;
+	int treeCounter[] = {0,0,0,0,0};
+	int currentXPos[] = {0,0,0,0,0};
+	bool skipSlope5 = false;
 	for (auto str : inputs) 
 	{
-		auto strPos = (str.length() + currentXPos) % str.length();
-		if (str[strPos] == '#')
-			treeCounter++;
+		for (int slope = 0; slope < 5; slope++) {
+			if (slope == 4)
+				skipSlope5 = !skipSlope5;
 
-		currentXPos += 3;
+			if (slope != 4 || skipSlope5) {
+				auto strPos = (str.length() + currentXPos[slope]) % str.length();
+				if (str[strPos] == '#')
+					treeCounter[slope]++;
+				currentXPos[slope] += (slope * 2) % 8 + 1;
+			}
+		}
 	}
 
-	std::cout << treeCounter << std::endl;
+	long long int product = 1;
+	for (int i = 0; i < 5; i++) {
+		std::cout << treeCounter[i] << std::endl;
+		product *= treeCounter[i];
+	}
+	std::cout << product << std::endl;
 }
