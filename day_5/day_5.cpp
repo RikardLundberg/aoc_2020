@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 int TranslateBinary(std::string val);
 int main()
 {
-	int highestId = 0;
+	std::vector<int> IDs;
 	std::string input;
 	while (std::cin >> input && input != "eof")
 	{
@@ -13,12 +15,22 @@ int main()
 		auto rowStr = input.substr(0, colPos);
 		auto col = TranslateBinary(colStr);
 		auto row = TranslateBinary(rowStr);
-		auto ID = row * 8 + col;
-		if (ID > highestId)
-			highestId = ID;
+		IDs.push_back(row * 8 + col);
 	}
 
-	std::cout << highestId << std::endl;
+	std::sort(IDs.begin(), IDs.end());
+
+	int currentSeat = IDs[0]-1;
+	int mySeat = 0;
+	for (int ID : IDs) {
+		if (ID != ++currentSeat) 
+		{
+			mySeat = currentSeat;
+			break;
+		}
+	}
+
+	std::cout << mySeat << std::endl;
 }
 
 int TranslateBinary(std::string val)
