@@ -10,35 +10,35 @@ struct rule
 	std::vector<int> containerCount;
 };
 
-void findContainers(std::vector<rule> rules, std::vector<std::string> &containers, std::string bag);
+int findContainers(std::vector<rule> rules, int& totalCount, int factor, std::string bag);
 int main()
 {
 	std::vector<rule> rules;
 	std::string input;
 
 	//fml parsing..
-	while (std::getline(std::cin, input) && input != "eof") 
+	while (std::getline(std::cin, input) && input != "eof")
 	{
 		rule rule;
 		auto bagString = input.substr(0, input.find(" contain"));
 		rule.bag = bagString.substr(0, bagString.find_last_of(" "));
-		auto containString = input.substr(input.find("contain ")+8);
-		while (true) 
+		auto containString = input.substr(input.find("contain ") + 8);
+		while (true)
 		{
 			if (containString == "no other bags.")
 				break;
 			if (containString.find(",") != std::string::npos)
 			{
 				bagString = containString.substr(0, containString.find(","));
-				containString = containString.substr(containString.find(",")+2);
+				containString = containString.substr(containString.find(",") + 2);
 				rule.containerCount.push_back(std::stoi(bagString.substr(0, bagString.find(" "))));
-				bagString = bagString.substr(bagString.find(" ")+1);
+				bagString = bagString.substr(bagString.find(" ") + 1);
 				rule.containers.push_back(bagString.substr(0, bagString.find_last_of(" ")));
 			}
 			else {
 				bagString = containString.substr(0, containString.find("."));
 				rule.containerCount.push_back(std::stoi(bagString.substr(0, bagString.find(" "))));
-				bagString = bagString.substr(bagString.find(" ")+1);
+				bagString = bagString.substr(bagString.find(" ") + 1);
 				rule.containers.push_back(bagString.substr(0, bagString.find_last_of(" ")));
 				break;
 			}
@@ -48,18 +48,24 @@ int main()
 
 	//actual problem
 	std::vector<std::string> containers;
-	findContainers(rules, containers, "shiny gold");
+	int count = 0;
+	count = findContainers(rules, count, 1, "shiny gold") - 1;
 
-	std::cout << containers.size() << std::endl;
+	std::cout << count << std::endl;
 }
 
-void findContainers(std::vector<rule> rules, std::vector<std::string> &containers, std::string bag)
+int findContainers(std::vector<rule> rules, int& totalCount, int factor, std::string bag)
 {
-	for (rule rule : rules) 
+	for (rule rule : rules)
 	{
-		if (std::count(rule.containers.begin(), rule.containers.end(), bag) && !std::count(containers.begin(), containers.end(), rule.bag)) {
-			containers.push_back(rule.bag);
-			findContainers(rules, containers, rule.bag);
+		if (rule.bag == bag)
+		{
+			auto retCount = 0;
+			for (int i = 0; i < rule.containers.size(); i++)
+			{
+				retCount += rule.containerCount[i] * (findContainers(rules, totalCount, rule.containerCount[i], rule.containers[i]));
+			}
+			return retCount + 1;
 		}
 	}
 }
