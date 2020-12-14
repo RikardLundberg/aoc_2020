@@ -3,16 +3,15 @@
 #include <vector>
 
 enum MaskBit {
-    X, ZERO, ONE
+    ZERO, ONE, X
 };
 
 class memory {
 public:
-    std::vector<int> modAddress;
+    std::vector<long long int> modAddress;
     std::vector<long long int> toVal;
 };
 
-std::string To36BitBinary(int val);
 int main()
 {
     MaskBit mask[36] = {};
@@ -26,46 +25,81 @@ int main()
             input = input.substr(input.find('[')+1);
             auto address = std::stoi(input.substr(0, input.find(']')));
             auto val = std::stoi(input.substr(input.find_last_of(' ') + 1));
-            if (val == 119)
-            {
-                std::string hej;
-            }
-            int a[36] = {0};
-            for (int i = 35; val > 0; i--)
-            {
-                a[i] = val % 2;
-                val = val / 2;
-            }
 
+            MaskBit a[36] = {};
+            for (int i = 35; address > 0; i--)
+            {
+                auto tmp = address % 2;
+                a[i] = tmp == 1 ? ONE : ZERO;
+                address = address / 2;
+            }
+            
             for (int i = 0; i < 36; i++)
             {
                 if (mask[i] == ONE)
-                    a[i] = 1;
-                else if (mask[i] == ZERO)
-                    a[i] = 0;
+                    a[i] = ONE;
+                else if (mask[i] == X)
+                    a[i] = X;
+            }
+            
+            
+            std::vector<std::vector<MaskBit>> allAddresses;
+            std::vector<std::vector<MaskBit>> permAddresses;
+
+            std::vector<MaskBit> aTmp;
+            for (int i = 0; i < 36; i++)
+                aTmp.push_back(a[i]);
+
+            allAddresses.push_back(aTmp);
+            bool containsX = true;
+
+            while (containsX) {
+                containsX = false;
+                std::vector<std::vector<MaskBit>> newAddresses;
+                for (auto tmpAdd : allAddresses) {
+                    std::vector<MaskBit> newAdd = tmpAdd;
+                    bool currentContainsX = false;
+                    for (int i = 0; i < 36; i++)
+                    {
+                        if (tmpAdd[i] == X)
+                        {
+                            containsX = true;
+                            currentContainsX = true;
+                            newAdd[i] = ZERO;
+                            newAddresses.push_back(newAdd);
+                            newAdd[i] = ONE;
+                            newAddresses.push_back(newAdd);
+                            break;
+                        }
+                    }
+                    if (!currentContainsX)
+                        permAddresses.push_back(newAdd);
+                }
+                allAddresses = newAddresses;
             }
 
-            long long int newVal = 0;
-            long long posWorth = 1;
-            for (int i = 35; i >= 0; i--)
-            {
-                long long add = (a[i]);
-                newVal += add * posWorth;
-                posWorth *= 2;
-            }
+            for (auto mbAdd : permAddresses) {
+                long long int wtAdd = 0;
+                long long posWorth = 1;
+                for (int i = 35; i >= 0; i--)
+                {
+                    wtAdd += mbAdd[i] * posWorth;
+                    posWorth *= 2;
+                }
 
-            if (newVal < 0)
-            {
-                std::string hej;
-            }
+                if (wtAdd < 0)
+                {
+                    std::string hej;
+                }
 
-            auto pos = std::find(mem.modAddress.begin(), mem.modAddress.end(), address);
-            if (pos != mem.modAddress.end())
-                mem.toVal[std::distance(mem.modAddress.begin(), pos)] = newVal;
-            else 
-            {
-                mem.modAddress.push_back(address);
-                mem.toVal.push_back(newVal);
+                auto pos = std::find(mem.modAddress.begin(), mem.modAddress.end(), wtAdd);
+                if (pos != mem.modAddress.end())
+                    mem.toVal[std::distance(mem.modAddress.begin(), pos)] = val;
+                else
+                {
+                    mem.modAddress.push_back(wtAdd);
+                    mem.toVal.push_back(val);
+                }
             }
         }
         else 
@@ -88,13 +122,4 @@ int main()
         sum += val;
 
     std::cout << sum << std::endl;
-}
-
-std::string To36BitBinary(int val)
-{
-    std::string res;
-
-    
-
-    return res;
 }
