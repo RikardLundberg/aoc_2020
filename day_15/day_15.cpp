@@ -2,6 +2,10 @@
 #include <vector>
 
 class mem {
+	//incredibly stupid solution for an incredibly stupid game
+	//takes hours to execute, but works
+	//could be optimized A LOT by multiple lists and/or sorting
+	//Eh
 public:
 	std::vector<int> nbr;
 	std::vector<int> lastSpoken;
@@ -12,7 +16,7 @@ void loadMem(mem& mem);
 int main()
 {
 	mem mem;
-	int turns = 2020;
+	int turns = 30000000;
 	loadMem(mem);
 	int startTurn = mem.nbr.size();
 	int finalNbr = playGame(mem, turns, startTurn);
