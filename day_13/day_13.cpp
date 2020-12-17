@@ -5,16 +5,10 @@
 void getInput(std::vector<int> &buses, std::vector<int>& poses);
 int main()
 {
-    //long long int ts = 100000000000000;
     long long int ts = 0;
     std::vector<int> buses;
     std::vector<int> poses;
     getInput(buses, poses);
-
-    /*int largeBus = buses[3];
-    while (!((ts + poses[3]) % buses[3] == 0))
-        ts++;
-        */
 
     int busIndex = 3;
     int busIndex2 = 7;
