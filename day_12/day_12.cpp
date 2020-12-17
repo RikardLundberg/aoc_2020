@@ -4,9 +4,10 @@
 class ship
 {
 public:
-    int currDirection = 90;
     int xPos = 0;
     int yPos = 0;
+    int wp_x = 10;
+    int wp_y = 1;
 };
 
 void doShipAction(std::string action, int val, ship& ship);
@@ -27,32 +28,53 @@ int main()
 void doShipAction(std::string action, int val, ship& ship)
 {
     if (action == "N")
-        ship.yPos += val;
+        ship.wp_y += val;
     else if (action == "S")
-        ship.yPos -= val;
+        ship.wp_y -= val;
     else if (action == "E")
-        ship.xPos += val;
+        ship.wp_x += val;
     else if (action == "W")
-        ship.xPos -= val;
-    else if (action == "L")
-        ship.currDirection = ((ship.currDirection - val)+360) % 360;
-    else if (action == "R")
-        ship.currDirection = (ship.currDirection + val) % 360;
-    else if (action == "F")
+        ship.wp_x -= val;
+    else if (action == "L") 
     {
-        switch (ship.currDirection) {
-        case 0:
-            ship.yPos += val;
-            break;
-        case 90:
-            ship.xPos += val;
+        auto tmp_y = ship.wp_y;
+        switch (val) {
+        case 270:
+            ship.wp_y = ship.wp_x * -1;
+            ship.wp_x = tmp_y;
             break;
         case 180:
-            ship.yPos -= val;
+            ship.wp_y = ship.wp_y * -1;
+            ship.wp_x = ship.wp_x * -1;
             break;
-        case 270:
-            ship.xPos -= val;
+        case 90:
+            ship.wp_y = ship.wp_x;
+            ship.wp_x = tmp_y * -1;
             break;
         }
+    }
+    else if (action == "R")
+    {
+        auto tmp_y = ship.wp_y;
+        switch (val) {
+        case 90:
+            ship.wp_y = ship.wp_x * -1;
+            ship.wp_x = tmp_y;
+            break;
+        case 180:
+            ship.wp_y = ship.wp_y * -1;
+            ship.wp_x = ship.wp_x * -1;
+            break;
+        case 270:
+            auto tmp_y = ship.wp_y;
+            ship.wp_y = ship.wp_x;
+            ship.wp_x = tmp_y * -1;
+            break;
+        }
+    }
+    else if (action == "F")
+    {
+        ship.xPos += (ship.wp_x * val);
+        ship.yPos += (ship.wp_y * val);
     }
 }
